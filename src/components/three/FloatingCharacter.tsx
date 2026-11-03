@@ -3,6 +3,8 @@ import { Html } from "@react-three/drei"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
+gsap.registerPlugin(ScrollTrigger)
+
 /* ------------------------------------------------------------------ */
 /* The SVG programmer character – inline (same as Character3D.tsx)     */
 /* ------------------------------------------------------------------ */
@@ -194,7 +196,7 @@ function setupScrollTrigger(htmlRef: HTMLDivElement) {
   const totalHeight = document.documentElement.scrollHeight - window.innerHeight
 
   // Create a ScrollTrigger that drives character position on each update
-  const st = ScrollTrigger.create({
+  return ScrollTrigger.create({
     trigger: document.body,
     start: "top top",
     end: `total ${totalHeight}px`,
@@ -207,7 +209,7 @@ function setupScrollTrigger(htmlRef: HTMLDivElement) {
       }
     },
     scrub: 1.5,
-  })
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -223,11 +225,10 @@ export default function FloatingCharacter() {
     if (!htmlRef) return
 
     // Set up ScrollTrigger with scrub for smooth following
-    const cleanup = setupScrollTrigger(htmlRef)
+    const trigger = setupScrollTrigger(htmlRef)
 
-    // Clean up on unmount - kill the ScrollTrigger
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => ScrollTrigger.kill(trigger))
+      trigger.kill()
     }
   }, [])
 
